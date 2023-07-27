@@ -1,8 +1,10 @@
 # en
-python demo for izumiswap(zksync-era) exchange token，supprt eth->usdc,usdc->eth,eth->usdt,usdt->eth  swap
+* python demo for izumiswap(zksync-era) exchange token，supprt eth->usdc,usdc->eth,eth->usdt,usdt->eth  swap
 # cn
-zksync-era链上izumiswap的兑换代币的python示例，支持 eth->usdc,usdc->eth,eth->usdt,usdt->eth  兑换
-
+* zksync-era链上izumiswap的兑换代币的python示例，支持 eth->usdc,usdc->eth,eth->usdt,usdt->eth  兑换
+## notice or 注意
+* Special note, the USDT here is different from other Swap's USDT token contracts. It is a type of shared stablecoin pool based on USDC and will receive a special token called sLUSDT, with 18 decimals.
+* 特别说明，这里的usdt不同于其他swap的usdt代币合约，而是一种共享稳定币池，基于usdc，会获得slusdt这种特别的代币，18位.
 # pip install -r requirements.txt 安装依赖包
 # code
 ```bash

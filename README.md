@@ -3,7 +3,8 @@ python demo for izumiswap(zksync-era) exchange token，supprt eth->usdc,usdc->et
 # cn
 zksync-era链上izumiswap的兑换代币的python示例，支持 eth->usdc,usdc->eth 兑换
 
-### pip install -r requirements.txt 安装依赖包
+# pip install -r requirements.txt 安装依赖包
+# code
 ```bash
 from main import Izumi
 # 你的私钥或者助记词，会自动判断

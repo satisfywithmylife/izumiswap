@@ -251,7 +251,7 @@ class Izumi():
                                 account=account,
                                 chain='ERA',
                                 from_token_address=share_liquit_usdt_contract_address,
-                                spender=router_contract_address,
+                                spender=swap_contract_address,
                                 )
 
         if self.coin_from.lower() == 'eth':

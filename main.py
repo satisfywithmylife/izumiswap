@@ -179,11 +179,10 @@ class Izumi():
         coin_map = {
             'eth': '0x5aea5775959fbc2557cc8789bc1bf90a239d9a91',
             'usdc': '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4',
-            'usdt': '0x3355df6D4c9C3035724Fd0e3914dE96A5a83aaf4'
+            'usdt': '0x496d88D1EFc3E145b7c12d53B78Ce5E7eda7a42c' # slusdt
         }
 
         swap_contract_address               = '0x943ac2310D9BC703d6AB5e5e76876e212100f894'
-        share_liquit_usdt_contract_address  = '0x496d88D1EFc3E145b7c12d53B78Ce5E7eda7a42c'
         router_contract_address             = '0x6C31035D62541ceba2Ac587ea09891d1645D6D07'
 
         izumi_contract = self.web3.eth.contract(
@@ -220,44 +219,36 @@ class Izumi():
             fee_chain = [fee]
         if (self.coin_from == 'eth' and self.coin_to == 'usdt') or (self.coin_from == 'usdt' and self.coin_to == 'eth'):
             fee = 400 # 0.04%
-            if self.coin_from == 'eth':
-                token_chain = [
-                    self.web3.to_checksum_address(coin_map[self.coin_from]),
-                    self.web3.to_checksum_address(coin_map[self.coin_to]),
-                    self.web3.to_checksum_address(share_liquit_usdt_contract_address)
-                ]
-            if self.coin_from == 'usdt': # 逆序
-                token_chain = [
-                    self.web3.to_checksum_address(share_liquit_usdt_contract_address),
-                    self.web3.to_checksum_address(coin_map[self.coin_from]),
-                    self.web3.to_checksum_address(coin_map[self.coin_to]),
-                ]
+           
+            token_chain = [
+                self.web3.to_checksum_address(coin_map[self.coin_from]),
+                self.web3.to_checksum_address(coin_map['usdc']),
+                self.web3.to_checksum_address(coin_map[self.coin_to])
+            ]
+           
             fee_chain = [fee, fee]
         path = self.get_path(token_chain, fee_chain)
         # 去掉字符串中的 '0x' 部分
         # remove “0x” part
         path = path.replace("0x", "")
 
-        if self.coin_from == 'usdc':
+        if self.coin_from != 'eth':
             utils.approve_token(amount=value,
                                 account=account,
                                 chain='ERA',
                                 from_token_address=coin_map[self.coin_from],
                                 spender=swap_contract_address,
                                 )
-                                
-        if self.coin_from == 'usdt':
-            utils.approve_token(amount=value,
-                                account=account,
-                                chain='ERA',
-                                from_token_address=share_liquit_usdt_contract_address,
-                                spender=swap_contract_address,
-                                )
-
+        decimal_map = {
+            'usdc': 5,
+            'usdt': 18
+        }
+        not_eth_coin = self.coin_to if self.coin_from == 'eth' else self.coin_from
+        deci = decimal_map[not_eth_coin]
         if self.coin_from.lower() == 'eth':
-            min_get = self.amount * eth_price * 10e5
+            min_get = self.amount * eth_price * 10**deci
         else:
-            min_get = self.amount / eth_price * 10e17
+            min_get = self.amount * 10 ** deci / eth_price * 10e17
         # 0.2% token fee, 0.5% splipage, min get 99.5%
         # 有千2的交易税费，考虑使用千5的滑点，计算最小的获得值，即千2的税已经包含在千5以内了
         # 所以交易滑点要大于千2，保险起见写千5，直接写千2会失败
